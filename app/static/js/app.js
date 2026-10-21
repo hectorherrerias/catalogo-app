@@ -1483,7 +1483,7 @@ function toggleTheme() {
   const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   try { localStorage.setItem('horology_theme', next); } catch (e) { /* sin almacenamiento */ }
-  $('meta[name="theme-color"]').setAttribute('content', next === 'dark' ? '#0d0e10' : '#f4f1ea');
+  $$('meta[name="theme-color"]').forEach(m => m.setAttribute('content', next === 'dark' ? '#0d0e10' : '#f4f1ea'));
 }
 
 // ==========================================================================
