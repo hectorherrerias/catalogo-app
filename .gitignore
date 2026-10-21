@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+venv/
+.venv/
+env/
+.idea/
+.vscode/
+.claude/
+
+# Datos persistentes (base de datos y fotos): viven en el host, nunca en git
+*.db
+*.db-wal
+*.db-shm
+data/*
+!data/.gitkeep

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Horology Studio</title>
+  <meta name="description" content="Catálogo personal de relojes, mods, calibres, piezas, herramientas y lista de deseos.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Horology">
+  <meta name="theme-color" content="#0d0e10">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%23c9a36a'/%3E%3Ccircle cx='32' cy='32' r='22' fill='%2317130c'/%3E%3Cpath d='M32 32 L32 16 M32 32 L42 38' stroke='%23e2c08c' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <!-- Tema sin parpadeo: preferencia guardada o la del sistema -->
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('horology_theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/static/css/styles.css?v=3">
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <!-- BARRA LATERAL -->
+    <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <div class="brand-name">Horology Studio</div>
+          <div class="brand-sub">Atelier & colección</div>
+        </div>
+      </div>
+
+      <nav class="nav-group" id="nav-sections"></nav>
+
+      <div class="nav-group">
+        <div class="nav-label">
+          <span>Colecciones</span>
+          <button class="icon-btn-mini" data-action="new-catalog" title="Nueva colección" aria-label="Nueva colección"><i data-lucide="plus"></i></button>
+        </div>
+        <div id="nav-catalogs"></div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="icon-btn outlined" data-action="toggle-theme" title="Cambiar tema" aria-label="Cambiar tema"><i data-lucide="sun-moon"></i></button>
+        <button class="icon-btn outlined" data-action="export" title="Descargar backup JSON" aria-label="Descargar backup"><i data-lucide="download"></i></button>
+        <button class="icon-btn outlined" data-action="import" title="Restaurar backup JSON" aria-label="Restaurar backup"><i data-lucide="upload"></i></button>
+        <button class="icon-btn outlined" data-action="reset-demo" title="Cargar datos de ejemplo" aria-label="Cargar datos de ejemplo"><i data-lucide="rotate-ccw"></i></button>
+      </div>
+    </aside>
+    <div class="scrim" data-action="close-menu"></div>
+
+    <div class="content">
+      <!-- BARRA SUPERIOR MÓVIL -->
+      <header class="topbar">
+        <button class="icon-btn" data-action="open-menu" aria-label="Abrir menú"><i data-lucide="menu"></i></button>
+        <div class="brand grow">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div class="brand-name">Horology</div>
+        </div>
+        <button class="icon-btn" data-action="toggle-theme" aria-label="Cambiar tema"><i data-lucide="sun-moon"></i></button>
+      </header>
+
+      <main class="main" id="main">
+        <div class="skeleton" style="height:120px;margin-bottom:16px"></div>
+        <div class="skeleton" style="height:320px"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- BARRA INFERIOR MÓVIL -->
+  <nav class="bottombar" aria-label="Navegación móvil">
+    <button data-route="resumen"><i data-lucide="layout-dashboard"></i><span>Resumen</span></button>
+    <button data-route="relojes"><i data-lucide="watch"></i><span>Relojes</span></button>
+    <button data-action="new-item" aria-label="Crear"><span class="fab"><i data-lucide="plus"></i></span></button>
+    <button data-route="piezas"><i data-lucide="cog"></i><span>Piezas</span></button>
+    <button data-action="open-menu"><i data-lucide="menu"></i><span>Más</span></button>
+  </nav>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+  <input type="file" id="import-file" accept="application/json,.json" class="hidden">
+
+  <script src="/static/js/app.js?v=3"></script>
+</body>
+</html>
