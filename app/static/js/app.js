@@ -1470,7 +1470,7 @@ async function importBackup(file) {
   const n = (data.watches || []).length;
   const ok = await confirmDialog({
     title: 'Restaurar backup',
-    message: `Se reemplazarán <b>todos</b> los datos actuales por los del archivo (${n} relojes, ${(data.parts || []).length} piezas, ${(data.movements || []).length} calibres). Te recomiendo descargar antes un backup de lo que tienes ahora.`,
+    message: `Se reemplazarán <b>todos</b> los datos actuales por los del archivo (${n} relojes, ${(data.parts || []).length} piezas, ${(data.movements || []).length} calibres). El servidor guarda antes una copia automática de lo que tienes ahora.`,
     confirmText: 'Restaurar', danger: true,
   });
   if (ok) await mutate(() => api('/api/summary/import', { method: 'POST', body: data }), 'Backup restaurado');
@@ -1515,7 +1515,7 @@ const ACTIONS = {
   'import': () => $('#import-file').click(),
   'reset-demo': async () => {
     const ok = await confirmDialog({ title: 'Cargar datos de ejemplo', message: 'Se <b>borrarán todos tus datos</b> y se cargarán relojes, calibres y piezas de ejemplo. Descarga antes un backup si quieres conservarlos.', confirmText: 'Borrar y cargar ejemplo', danger: true });
-    if (ok) await mutate(() => api('/api/summary/reset-seed', { method: 'POST' }), 'Datos de ejemplo cargados');
+    if (ok) await mutate(() => api('/api/summary/reset-seed?confirm=BORRAR', { method: 'POST' }), 'Datos de ejemplo cargados');
   },
   'new-item': newItem,
   'new-catalog': () => openCatalogForm(),

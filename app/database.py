@@ -163,10 +163,13 @@ def init_db():
     conn.commit()
     UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Si no hay catálogos, sembrar catálogos iniciales
+    # Datos de ejemplo solo en una instalación nueva: si el usuario borra todo más adelante, no se
+    # vuelven a meter relojes inventados al reiniciar (la marca .seeded indica que ya se instaló)
+    seeded_mark = Path(DB_PATH).parent / ".seeded"
     cursor.execute("SELECT COUNT(*) as count FROM catalogs;")
-    if cursor.fetchone()["count"] == 0:
+    if cursor.fetchone()["count"] == 0 and not seeded_mark.exists():
         seed_initial_data(conn)
+    seeded_mark.touch(exist_ok=True)
 
     conn.close()
 

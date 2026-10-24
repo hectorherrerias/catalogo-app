@@ -1,9 +1,29 @@
+import sqlite3
+from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, Optional
 from fastapi import APIRouter, Body, HTTPException, Query
-from app.database import get_db_connection, seed_initial_data
+from app.database import DB_PATH, get_db_connection, seed_initial_data
 from app.models import DashboardSummary
 
 router = APIRouter(prefix="/api/summary", tags=["Dashboard y Resumen"])
+
+
+def safety_backup(reason: str) -> str:
+    """Copia consistente de la base antes de reemplazar o borrar datos (guarda las 20 últimas)."""
+    backup_dir = Path(DB_PATH).parent / "backups"
+    backup_dir.mkdir(parents=True, exist_ok=True)
+    target = backup_dir / f"antes-{reason}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.db"
+    src = sqlite3.connect(DB_PATH)
+    dst = sqlite3.connect(str(target))
+    try:
+        src.backup(dst)
+    finally:
+        dst.close()
+        src.close()
+    for old in sorted(backup_dir.glob("antes-*.db"))[:-20]:
+        old.unlink(missing_ok=True)
+    return str(target)
 
 @router.get("", response_model=DashboardSummary)
 def get_dashboard_summary(catalog_id: Optional[int] = Query(None, description="Filtrar métricas por catálogo")):
@@ -182,8 +202,11 @@ def export_database_json():
     }
 
 @router.post("/reset-seed")
-def reset_to_seed():
-    """Reinicia la base de datos a los datos de ejemplo predeterminados."""
+def reset_to_seed(confirm: str = Query("", description="Debe ser BORRAR")):
+    """Reinicia la base de datos a los datos de ejemplo. Exige confirm=BORRAR y guarda antes una copia."""
+    if confirm != "BORRAR":
+        raise HTTPException(status_code=400, detail="Para borrar todo y cargar el ejemplo hay que confirmar con BORRAR")
+    safety_backup("ejemplo")
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM watch_components;")
@@ -228,6 +251,7 @@ def import_database_json(backup: Dict[str, Any] = Body(...)):
     if not any(k in backup for k in IMPORT_TABLES):
         raise HTTPException(status_code=400, detail="El archivo no parece un backup válido de Horology Studio")
 
+    safety_backup("restaurar")
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
